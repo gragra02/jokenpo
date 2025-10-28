@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Jokenpô com Python!</title>
+    <style>
+        /* (Vou usar um CSS mínimo aqui, pode usar o da resposta anterior) */
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .opcoes button { font-size: 1.5em; margin: 10px; padding: 15px; cursor: pointer; }
+        #resultado { margin-top: 30px; font-size: 1.2em; }
+        .vitoria { color: green; }
+        .derrota { color: red; }
+        .empate { color: gray; }
+    </style>
+</head>
+<body>
+
+    <h1>Jokenpô (HTML + Python)</h1>
+    <h3>Escolha sua jogada:</h3>
+
+    <div class="opcoes">
+        <button onclick="jogar(0)">Pedra ✊</button>
+        <button onclick="jogar(1)">Papel ✋</button>
+        <button onclick="jogar(2)">Tesoura ✌️</button>
+    </div>
+
+    <div id="resultado">
+        <p>Aguardando sua jogada...</p>
+    </div>
+
+
+    <script>
+        // Esta é a função que "conversa" com o Backend (seu Python)
+        async function jogar(escolha_jogador) {
+            
+            // 1. Mostrar o "JO-KEN-PO" (lógica do frontend)
+            const divResultado = document.getElementById('resultado');
+            divResultado.innerHTML = "<p>JO...</p>";
+            await sleep(800);
+            divResultado.innerHTML = "<p>KEN...</p>";
+            await sleep(800);
+            divResultado.innerHTML = "<p>PÔ!!!</p>";
+            await sleep(800);
+
+            // 2. Enviar a jogada para o servidor Python (Backend)
+            // O 'fetch' é o "garçom" indo até a "cozinha"
+            const resposta = await fetch('/jogar', {
+                method: 'POST', // Estamos enviando dados
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // O 'body' é o "pedido" que estamos enviando
+                body: JSON.stringify({ 'escolha': escolha_jogador }) 
+            });
+
+            // 3. Pegar a resposta que o Python enviou de volta
+            const resultado = await resposta.json();
+
+            // 4. Mostrar o resultado na tela
+            let classeCor = "";
+            if (resultado.resultado_final === "Você Venceu!") {
+                classeCor = "vitoria";
+            } else if (resultado.resultado_final === "Computador Venceu!") {
+                classeCor = "derrota";
+            } else {
+                classeCor = "empate";
+            }
+
+            divResultado.innerHTML = `
+                <p>Computador jogou: <strong>${resultado.computador_jogou}</strong></p>
+                <p>Você jogou: <strong>${resultado.jogador_jogou}</strong></p>
+                <h2 class="${classeCor}">${resultado.resultado_final}</h2>
+            `;
+        }
+
+        // Função auxiliar para criar o 'sleep' (pausa)
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+
+</body>
+</html>
