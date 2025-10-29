@@ -2,15 +2,73 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Jokenpô com Python!</title>
     <style>
-        /* (Vou usar um CSS mínimo aqui, pode usar o da resposta anterior) */
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .opcoes button { font-size: 1.5em; margin: 10px; padding: 15px; cursor: pointer; }
-        #resultado { margin-top: 30px; font-size: 1.2em; }
-        .vitoria { color: green; }
-        .derrota { color: red; }
-        .empate { color: gray; }
+        /* --- Estilos Base (Desktop) --- */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            text-align: center; 
+            padding-top: 50px; 
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        .opcoes {
+            display: flex; /* Coloca os botões lado a lado */
+            justify-content: center; /* Centra os botões na horizontal */
+            gap: 20px; /* Espaço entre os botões */
+        }
+        .opcoes button { 
+            font-size: 1.5em; 
+            margin: 10px; 
+            padding: 20px 30px; /* Mais preenchimento */
+            cursor: pointer; 
+            border: none;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .opcoes button:hover {
+            transform: translateY(-3px); /* Efeito de "levantar" */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        #resultado { 
+            margin-top: 30px; 
+            font-size: 1.2em; 
+            min-height: 100px;
+        }
+        .vitoria { color: #28a745; font-weight: bold; }
+        .derrota { color: #dc3545; font-weight: bold; }
+        .empate { color: #6c757d; font-weight: bold; }
+
+        /* MUDANÇA 2: A MEDIA QUERY PARA TELEMÓVEIS */
+        /* Estas regras só se aplicam se o ecrã tiver 600px de largura ou menos */
+        @media (max-width: 600px) {
+            body {
+                padding-top: 20px;
+            }
+            h1 {
+                font-size: 1.8em; /* Diminui um pouco o título principal */
+            }
+            h3 {
+                font-size: 1.1em;
+            }
+            .opcoes {
+                flex-direction: column; /* Empilha os botões verticalmente */
+                align-items: center;    /* Centra os botões empilhados */
+            }
+            .opcoes button {
+                width: 80%; /* Faz os botões ocuparem 80% da largura */
+                max-width: 300px; /* Limite para não ficarem gigantes */
+                font-size: 1.3em;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -43,13 +101,11 @@
             await sleep(800);
 
             // 2. Enviar a jogada para o servidor Python (Backend)
-            // O 'fetch' é o "garçom" indo até a "cozinha"
             const resposta = await fetch('/jogar', {
-                method: 'POST', // Estamos enviando dados
+                method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                // O 'body' é o "pedido" que estamos enviando
                 body: JSON.stringify({ 'escolha': escolha_jogador }) 
             });
 
